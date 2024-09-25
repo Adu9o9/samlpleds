@@ -1,0 +1,213 @@
+1)#include <stdio.h>
+
+void checkSparseMatrix(int matrix[10][10], int rows, int cols) {
+    int countZero = 0, totalElements = rows * cols;
+    
+    // Traverse each element of the matrix
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            if (matrix[i][j] == 0) {
+                countZero++;
+            }
+        }
+    }
+    
+    float sparsity = (float)countZero / totalElements * 100;
+    printf("Sparsity: %.2f%%\n", sparsity);
+    
+    if (countZero > totalElements / 2) {
+        printf("The matrix is sparse.\n");
+    } else {
+        printf("The matrix is not sparse.\n");
+    }
+}
+
+int main() {
+    int rows, cols;
+    int matrix[10][10];
+
+    // Input dimensions
+    printf("Enter the number of rows: ");
+    scanf("%d", &rows);
+    printf("Enter the number of columns: ");
+    scanf("%d", &cols);
+
+    // Input matrix elements
+    printf("Enter the elements of the matrix:\n");
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            scanf("%d", &matrix[i][j]);
+        }
+    }
+
+    checkSparseMatrix(matrix, rows, cols);
+    return 0;
+}
+
+
+2)#include <stdio.h>
+
+void convertToSparse(int matrix[10][10], int rows, int cols) {
+    int sparse[100][3], k = 0;
+
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            if (matrix[i][j] != 0) {
+                sparse[k][0] = i;
+                sparse[k][1] = j;
+                sparse[k][2] = matrix[i][j];
+                k++;
+            }
+        }
+    }
+
+    printf("Sparse Representation (row, col, value):\n");
+    for (int i = 0; i < k; i++) {
+        printf("%d %d %d\n", sparse[i][0], sparse[i][1], sparse[i][2]);
+    }
+}
+
+int main() {
+    int rows, cols;
+    int matrix[10][10];
+
+    // Input dimensions
+    printf("Enter the number of rows: ");
+    scanf("%d", &rows);
+    printf("Enter the number of columns: ");
+    scanf("%d", &cols);
+
+    // Input matrix elements
+    printf("Enter the elements of the matrix:\n");
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            scanf("%d", &matrix[i][j]);
+        }
+    }
+
+    convertToSparse(matrix, rows, cols);
+    return 0;
+}
+
+
+
+3)#include <stdio.h>
+
+void addSparseMatrices(int mat1[100][3], int size1, int mat2[100][3], int size2) {
+    int result[200][3], i = 0, j = 0, k = 0;
+
+    while (i < size1 && j < size2) {
+        if (mat1[i][0] == mat2[j][0] && mat1[i][1] == mat2[j][1]) {
+            result[k][0] = mat1[i][0];
+            result[k][1] = mat1[i][1];
+            result[k][2] = mat1[i][2] + mat2[j][2];
+            i++; j++; k++;
+        } else if (mat1[i][0] < mat2[j][0] || (mat1[i][0] == mat2[j][0] && mat1[i][1] < mat2[j][1])) {
+            result[k][0] = mat1[i][0];
+            result[k][1] = mat1[i][1];
+            result[k][2] = mat1[i][2];
+            i++; k++;
+        } else {
+            result[k][0] = mat2[j][0];
+            result[k][1] = mat2[j][1];
+            result[k][2] = mat2[j][2];
+            j++; k++;
+        }
+    }
+
+    while (i < size1) {
+        result[k][0] = mat1[i][0];
+        result[k][1] = mat1[i][1];
+        result[k][2] = mat1[i][2];
+        i++; k++;
+    }
+
+    while (j < size2) {
+        result[k][0] = mat2[j][0];
+        result[k][1] = mat2[j][1];
+        result[k][2] = mat2[j][2];
+        j++; k++;
+    }
+
+    printf("Result of addition (row, col, value):\n");
+    for (int l = 0; l < k; l++) {
+        printf("%d %d %d\n", result[l][0], result[l][1], result[l][2]);
+    }
+}
+
+int main() {
+    int size1, size2;
+    int mat1[100][3], mat2[100][3];
+
+    // Input sparse matrix 1
+    printf("Enter the number of elements in the first sparse matrix: ");
+    scanf("%d", &size1);
+    printf("Enter the elements of the first sparse matrix (row, col, value):\n");
+    for (int i = 0; i < size1; i++) {
+        scanf("%d %d %d", &mat1[i][0], &mat1[i][1], &mat1[i][2]);
+    }
+
+    // Input sparse matrix 2
+    printf("Enter the number of elements in the second sparse matrix: ");
+    scanf("%d", &size2);
+    printf("Enter the elements of the second sparse matrix (row, col, value):\n");
+    for (int i = 0; i < size2; i++) {
+        scanf("%d %d %d", &mat2[i][0], &mat2[i][1], &mat2[i][2]);
+    }
+
+    addSparseMatrices(mat1, size1, mat2, size2);
+    return 0;
+}
+4)#include <stdio.h>
+
+void transposeSparseMatrix(int sparse[100][3], int size) {
+    int transpose[100][3], k = 0;
+
+    for (int i = 0; i < size; i++) {
+        transpose[k][0] = sparse[i][1];  // Swap row and column
+        transpose[k][1] = sparse[i][0];
+        transpose[k][2] = sparse[i][2];
+        k++;
+    }
+
+    // Sorting by rows (and by columns if necessary)
+    for (int i = 0; i < k - 1; i++) {
+        for (int j = i + 1; j < k; j++) {
+            if (transpose[i][0] > transpose[j][0] ||
+                (transpose[i][0] == transpose[j][0] && transpose[i][1] > transpose[j][1])) {
+                // Swap the entries
+                int tempRow = transpose[i][0];
+                int tempCol = transpose[i][1];
+                int tempVal = transpose[i][2];
+                transpose[i][0] = transpose[j][0];
+                transpose[i][1] = transpose[j][1];
+                transpose[i][2] = transpose[j][2];
+                transpose[j][0] = tempRow;
+                transpose[j][1] = tempCol;
+                transpose[j][2] = tempVal;
+            }
+        }
+    }
+
+    printf("Transpose of sparse matrix (row, col, value):\n");
+    for (int i = 0; i < k; i++) {
+        printf("%d %d %d\n", transpose[i][0], transpose[i][1], transpose[i][2]);
+    }
+}
+
+int main() {
+    int size;
+    int sparse[100][3];
+
+    // Input sparse matrix
+    printf("Enter the number of elements in the sparse matrix: ");
+    scanf("%d", &size);
+    printf("Enter the elements of the sparse matrix (row, col, value):\n");
+    for (int i = 0; i < size; i++) {
+        scanf("%d %d %d", &sparse[i][0], &sparse[i][1], &sparse[i][2]);
+    }
+
+    transposeSparseMatrix(sparse, size);
+    return 0;
+}
+
